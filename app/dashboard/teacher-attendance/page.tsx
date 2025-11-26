@@ -3,9 +3,12 @@
 import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
+import { ProtectedRoute } from "@/components/protected-route"
+import { DashboardLayout } from "@/components/dashboard-layout"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, Calendar, Check, X } from "lucide-react"
+import { AlertCircle, Calendar, Check, X, Search } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { mockTeachers, mockTeacherAttendance } from "@/lib/mock-data"
 import type { TeacherAttendance } from "@/lib/types"
@@ -15,6 +18,7 @@ export default function TeacherAttendancePage() {
   const router = useRouter()
   const [attendance, setAttendance] = useState<TeacherAttendance[]>(mockTeacherAttendance)
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
+  const [searchTerm, setSearchTerm] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
 
   // Redirect if not admin
@@ -60,14 +64,21 @@ export default function TeacherAttendancePage() {
 
   const stats = getAttendanceStats()
 
+  const filteredTeachers = mockTeachers.filter((teacher) =>
+    teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Presença de Professores</h1>
-          <p className="text-gray-600 mt-2">Registre a presença dos professores</p>
-        </div>
-      </div>
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Presença de Professores</h1>
+              <p className="text-muted-foreground mt-1">Registre a presença dos professores</p>
+            </div>
+          </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -123,6 +134,24 @@ export default function TeacherAttendancePage() {
         </CardContent>
       </Card>
 
+      {/* Search Filter */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Filtrar Professores</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome ou email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Attendance Table */}
       <Card>
         <CardHeader>
@@ -131,7 +160,7 @@ export default function TeacherAttendancePage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {mockTeachers.map((teacher) => {
+            {filteredTeachers.map((teacher) => {
               const status = getAttendanceStatus(teacher.id)
               return (
                 <div key={teacher.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
@@ -171,5 +200,7 @@ export default function TeacherAttendancePage() {
         </CardContent>
       </Card>
     </div>
+    </DashboardLayout>
+    </ProtectedRoute>
   )
 }
