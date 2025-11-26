@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, Download, TrendingUp, Users, BookOpen } from "lucide-react"
-import { mockAssessments, mockStudents, mockTeachers } from "@/lib/mock-data"
+import { mockAssessments, mockStudents, mockTeachers, mockDisciplines, mockSubjects } from "@/lib/mock-data"
 import type { Assessment } from "@/lib/types"
 
 export default function AssessmentsPage() {
@@ -20,18 +20,23 @@ export default function AssessmentsPage() {
   const [filterTrimester, setFilterTrimester] = useState<string>("all")
   const [filterType, setFilterType] = useState<string>("all")
 
-  const subjects = Array.from(new Set(assessments.map((a) => a.subject)))
+  const getSubjectName = (disciplineId: string) => {
+    const discipline = mockDisciplines.find((d) => d.id === disciplineId)
+    const subject = mockSubjects.find((s) => s.id === discipline?.subjectId)
+    return subject?.name || "N/A"
+  }
+
+  const subjects = Array.from(new Set(assessments.map((a) => getSubjectName(a.disciplineId))))
 
   const filteredAssessments = assessments.filter((assessment) => {
     const student = mockStudents.find((s) => s.id === assessment.studentId)
-    const teacher = mockTeachers.find((t) => t.id === assessment.teacherId)
+    const subjectName = getSubjectName(assessment.disciplineId)
 
     const matchesSearch =
       student?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assessment.subject.toLowerCase().includes(searchTerm.toLowerCase())
+      subjectName.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesSubject = filterSubject === "all" || assessment.subject === filterSubject
+    const matchesSubject = filterSubject === "all" || subjectName === filterSubject
     const matchesTrimester = filterTrimester === "all" || assessment.trimester.toString() === filterTrimester
     const matchesType = filterType === "all" || assessment.type === filterType
 
@@ -61,7 +66,7 @@ export default function AssessmentsPage() {
     const totalAssessments = assessments.length
     const averageGrade = assessments.reduce((sum, a) => sum + (a.grade / a.maxGrade) * 20, 0) / totalAssessments
     const uniqueStudents = new Set(assessments.map((a) => a.studentId)).size
-    const uniqueSubjects = new Set(assessments.map((a) => a.subject)).size
+    const uniqueSubjects = new Set(assessments.map((a) => getSubjectName(a.disciplineId))).size
 
     return {
       total: totalAssessments,
@@ -78,7 +83,6 @@ export default function AssessmentsPage() {
       [
         "Data",
         "Aluno",
-        "Professor",
         "Disciplina",
         "Tipo",
         "Nota",
@@ -90,8 +94,7 @@ export default function AssessmentsPage() {
       ...filteredAssessments.map((a) => [
         new Date(a.date).toLocaleDateString("pt-AO"),
         getStudentName(a.studentId),
-        getTeacherName(a.teacherId),
-        a.subject,
+        getSubjectName(a.disciplineId),
         getTypeLabel(a.type),
         a.grade,
         a.maxGrade,
@@ -250,7 +253,6 @@ export default function AssessmentsPage() {
                     <TableRow>
                       <TableHead>Data</TableHead>
                       <TableHead>Aluno</TableHead>
-                      <TableHead>Professor</TableHead>
                       <TableHead>Disciplina</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Nota</TableHead>
@@ -272,8 +274,7 @@ export default function AssessmentsPage() {
                           <TableRow key={assessment.id}>
                             <TableCell>{new Date(assessment.date).toLocaleDateString("pt-AO")}</TableCell>
                             <TableCell className="font-medium">{getStudentName(assessment.studentId)}</TableCell>
-                            <TableCell>{getTeacherName(assessment.teacherId)}</TableCell>
-                            <TableCell>{assessment.subject}</TableCell>
+                            <TableCell>{getSubjectName(assessment.disciplineId)}</TableCell>
                             <TableCell>
                               <Badge variant="outline">{getTypeLabel(assessment.type)}</Badge>
                             </TableCell>
