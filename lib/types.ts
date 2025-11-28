@@ -74,6 +74,7 @@ export interface Guardian {
 }
 
 export interface Assessment {
+  subject: string
   id: string
   studentId: string
   disciplineId: string // Changed to link to Discipline instead of teacherId

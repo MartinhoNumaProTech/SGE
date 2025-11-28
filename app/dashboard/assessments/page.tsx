@@ -122,10 +122,6 @@ export default function AssessmentsPage() {
               <h1 className="text-3xl font-bold">Gestão de Avaliações</h1>
               <p className="text-muted-foreground mt-1">Visão geral de todas as avaliações do sistema</p>
             </div>
-            <Button onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" />
-              Exportar CSV
-            </Button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-4">
