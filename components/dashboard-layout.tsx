@@ -29,7 +29,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleLogout = () => {
     logout()
-    router.push("/")
+    router.push("/login")
   }
 
   const getNavigationItems = () => {
