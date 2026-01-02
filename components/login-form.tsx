@@ -32,64 +32,62 @@ export function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-            <GraduationCap className="w-7 h-7 text-white" />
+    <Card className="w-full max-w-md">
+      <CardHeader className="space-y-4 text-center">
+        <div className="mx-auto w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+          <GraduationCap className="w-7 h-7 text-white" />
+        </div>
+        <div>
+          <CardTitle className="text-2xl">Sistema de Gestão Escolar</CardTitle>
+          <CardDescription>Entre com suas credenciais para acessar</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="seu@email.ao"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-          <div>
-            <CardTitle className="text-2xl">Sistema de Gestão Escolar</CardTitle>
-            <CardDescription>Entre com suas credenciais para acessar</CardDescription>
+          <div className="space-y-2">
+            <Label htmlFor="password">Senha</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.ao"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-            <Button type="submit" className="w-full">
-              Entrar
-            </Button>
-          </form>
+          <Button type="submit" className="w-full">
+            Entrar
+          </Button>
+        </form>
 
-          <div className="mt-6 p-4 bg-muted rounded-lg space-y-2 text-sm">
-            <p className="font-medium">Credenciais de teste:</p>
-            <div className="space-y-1 text-muted-foreground">
-              <p>Admin: admin@escola.ao</p>
-              <p>Professor: joao@escola.ao</p>
-              <p>Encarregado: maria@email.ao</p>
-              <p className="text-xs mt-2">Senha: qualquer</p>
-            </div>
+        <div className="mt-6 p-4 bg-muted rounded-lg space-y-2 text-sm">
+          <p className="font-medium">Credenciais de teste:</p>
+          <div className="space-y-1 text-muted-foreground">
+            <p>Admin: admin@escola.ao</p>
+            <p>Professor: joao@escola.ao</p>
+            <p>Encarregado: maria@email.ao</p>
+            <p className="text-xs mt-2">Senha: qualquer</p>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
